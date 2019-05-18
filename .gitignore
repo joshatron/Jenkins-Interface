@@ -1,5 +1,6 @@
 .idea/
 target/
+app/
 *.json
 dependency-reduced-pom.xml
 *.iml
