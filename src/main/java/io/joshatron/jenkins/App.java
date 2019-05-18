@@ -1,4 +1,4 @@
-package io.joshatron;
+package io.joshatron.jenkins;
 
 /**
  * Hello world!
