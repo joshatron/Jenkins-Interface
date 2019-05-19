@@ -7,6 +7,9 @@ import java.util.ArrayList;
 
 @Data
 @AllArgsConstructor
-public class JenkinsConfig {
-    private ArrayList<JenkinsConfig> servers;
+public class JenkinsServer {
+    private String baseUrl;
+    private String username;
+    private String password;
+    private ArrayList<Job> jobs;
 }
