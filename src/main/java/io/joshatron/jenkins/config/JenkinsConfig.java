@@ -4,11 +4,44 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 public class JenkinsConfig {
     private ArrayList<JenkinsServer> servers;
+
+    public JenkinsConfig() {
+        servers = new ArrayList<>();
+    }
+
+    public JenkinsConfig getJobsWithTag(String tag) {
+        ArrayList<String> tags = new ArrayList<>();
+        tags.add(tag);
+        return getJobsWithTags(tags);
+    }
+
+    public JenkinsConfig getJobsWithTags(List<String> tags) {
+        JenkinsConfig jobs = new JenkinsConfig();
+
+        for(JenkinsServer server : servers) {
+            boolean added = false;
+            for(JenkinsJob job : server.getJobs()) {
+                for(String tag : tags) {
+                    if(job.getTags().contains(tag)) {
+                        if(!added) {
+                            jobs.addServer(server);
+                            added = true;
+                        }
+                        jobs.addJob(server.getName(), job);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return jobs;
+    }
 
     public void addServer(JenkinsServer server) {
         servers.add(server);
