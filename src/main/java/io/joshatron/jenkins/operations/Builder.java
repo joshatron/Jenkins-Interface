@@ -3,6 +3,7 @@ package io.joshatron.jenkins.operations;
 import io.joshatron.jenkins.config.JenkinsConfig;
 import io.joshatron.jenkins.config.JenkinsJob;
 import io.joshatron.jenkins.config.JenkinsServer;
+import io.joshatron.jenkins.config.Parameter;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -12,6 +13,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,12 +48,32 @@ public class Builder {
                 System.out.println(EntityUtils.toString(response.getEntity()));
             }
         } catch (Exception e) {
+            System.out.println("Exception while building job");
             e.printStackTrace();
         }
     }
 
     private static String createPayload(JenkinsJob job, Arguments arguments) {
-        return "";
+        JSONObject toReturn = new JSONObject();
+
+        JSONArray parameters = new JSONArray();
+        for(Parameter parameter : job.getParameters()) {
+            JSONObject p = new JSONObject();
+            p.put("name", parameter.getArgName());
+            if(arguments.getArgs().containsKey(parameter.getArgName())) {
+                p.put("value", arguments.getArgs().get(parameter.getArgName()));
+            }
+            else if(parameter.getDefaultValue() != null && !parameter.getDefaultValue().isEmpty()) {
+                p.put("value", parameter.getDefaultValue());
+            }
+            else {
+                p.put("value", "");
+            }
+            parameters.put(p);
+        }
+        toReturn.put("parameter", parameters);
+
+        return toReturn.toString();
     }
 
     public static void buildJobs(JenkinsConfig config, Arguments arguments) throws IOException {

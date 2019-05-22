@@ -13,6 +13,13 @@ public class JenkinsJob {
     private ArrayList<String> tags;
     private ArrayList<Parameter> parameters;
 
+    public JenkinsJob(String name, String url) {
+        this.name = name;
+        this.url = url;
+        this.tags = new ArrayList<>();
+        this.parameters = new ArrayList<>();
+    }
+
     public void addTag(String tag) {
         tags.add(tag);
     }
