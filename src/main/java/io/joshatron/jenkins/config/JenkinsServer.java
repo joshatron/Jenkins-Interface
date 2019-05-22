@@ -10,8 +10,7 @@ import java.util.ArrayList;
 public class JenkinsServer {
     private String name;
     private String baseUrl;
-    private String username;
-    private String password;
+    private String auth;
     private ArrayList<JenkinsJob> jobs;
 
     public void addJob(JenkinsJob jenkinsJob) {
@@ -25,5 +24,15 @@ public class JenkinsServer {
                 break;
             }
         }
+    }
+
+    public JenkinsJob getJob(String jobName) {
+        for(JenkinsJob job : jobs) {
+            if(job.getName().equalsIgnoreCase(jobName)) {
+                return job;
+            }
+        }
+
+        return null;
     }
 }
