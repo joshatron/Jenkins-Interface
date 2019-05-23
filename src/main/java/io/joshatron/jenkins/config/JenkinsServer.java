@@ -21,6 +21,13 @@ public class JenkinsServer {
         this.jobs = new ArrayList<>();
     }
 
+    public JenkinsServer(String name, String baseUrl, String auth) {
+        this.name = name;
+        this.baseUrl = baseUrl;
+        this.auth = auth;
+        this.jobs = new ArrayList<>();
+    }
+
     public void addJob(JenkinsJob jenkinsJob) {
         jobs.add(jenkinsJob);
     }

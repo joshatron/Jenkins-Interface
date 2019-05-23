@@ -23,4 +23,12 @@ public class Arguments {
             args.remove(argument);
         }
     }
+
+    public boolean hasArgument(String name) {
+        return args.containsKey(name);
+    }
+
+    public String getArgument(String name) {
+        return args.get(name);
+    }
 }

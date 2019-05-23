@@ -39,7 +39,7 @@ public class JenkinsJob {
 
     public void removeParameter(String parameterName) {
         for(Parameter parameter : parameters) {
-            if(parameter.getParameterName().equalsIgnoreCase(parameterName)) {
+            if(parameter.getName().equalsIgnoreCase(parameterName)) {
                 tags.remove(parameter);
                 break;
             }

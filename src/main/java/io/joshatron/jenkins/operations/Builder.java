@@ -60,8 +60,8 @@ public class Builder {
         for(Parameter parameter : job.getParameters()) {
             JSONObject p = new JSONObject();
             p.put("name", parameter.getArgName());
-            if(arguments.getArgs().containsKey(parameter.getParameterName())) {
-                p.put("value", arguments.getArgs().get(parameter.getParameterName()));
+            if(arguments.hasArgument(parameter.getName())) {
+                p.put("value", arguments.getArgs().get(parameter.getName()));
             }
             else if(parameter.getDefaultValue() != null && !parameter.getDefaultValue().isEmpty()) {
                 p.put("value", parameter.getDefaultValue());

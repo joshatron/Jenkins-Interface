@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Parameter {
-    private String parameterName;
-    private ParameterType parameterType;
+    private String name;
+    private ParameterType type;
     private String defaultValue;
     private String argName;
 }
