@@ -30,6 +30,6 @@ public class ConfigManager {
     public static void exportConfig(JenkinsConfig config, String configFile) throws IOException {
         File file = new File(configFile);
         ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(file, config);
+        mapper.writerWithDefaultPrettyPrinter().writeValue(file, config);
     }
 }

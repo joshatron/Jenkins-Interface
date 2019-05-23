@@ -4,14 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 public class JenkinsJob {
     private String name;
     private String url;
-    private ArrayList<String> tags;
-    private ArrayList<Parameter> parameters;
+    private List<String> tags;
+    private List<Parameter> parameters;
 
     public JenkinsJob(String name, String url) {
         this.name = name;

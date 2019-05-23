@@ -4,6 +4,7 @@ import io.joshatron.jenkins.config.ConfigManager;
 import io.joshatron.jenkins.config.JenkinsConfig;
 import io.joshatron.jenkins.operations.Arguments;
 import io.joshatron.jenkins.operations.Builder;
+import io.joshatron.jenkins.operations.Importer;
 
 import java.util.Arrays;
 
@@ -17,10 +18,23 @@ public class App
 
             switch(command) {
                 case "build":
-                    config = reduceConfig(config, arguments);
-                    Builder.buildJobs(config, arguments);
+                    System.out.println("Building specified jobs");
+                    if(arguments.hasArgument("tags")) {
+                        Builder.buildJobs(config, Arrays.asList(arguments.getArgument("tags").split(" ")), arguments);
+                    }
+                    else {
+                        Builder.buildJobs(config, arguments);
+                    }
                     break;
+                case "import":
+                    System.out.println("Importing jobs");
+                    Importer.importJobsFromFolder(config, arguments);
+                    break;
+                default:
+                    System.out.println("Invalid command");
             }
+
+            ConfigManager.exportConfig(config);
         } catch (Exception e) {
             System.out.println("An exception occurred, exiting");
             e.printStackTrace();
@@ -54,14 +68,5 @@ public class App
         }
 
         return arguments;
-    }
-
-    private static JenkinsConfig reduceConfig(JenkinsConfig config, Arguments arguments) {
-        if(arguments.hasArgument("tags")) {
-            config = config.getJobsWithTags(Arrays.asList(arguments.getArgument("tags").split(" ")));
-            arguments.removeArgument("tags");
-        }
-
-        return config;
     }
 }

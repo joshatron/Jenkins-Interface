@@ -27,15 +27,20 @@ public class JenkinsConfig {
         for(JenkinsServer server : servers) {
             boolean added = false;
             for(JenkinsJob job : server.getJobs()) {
+                boolean toAdd = true;
                 for(String tag : tags) {
-                    if(job.getTags().contains(tag)) {
-                        if(!added) {
-                            jobs.addServer(new JenkinsServer(server.getName(), server.getBaseUrl(), server.getAuth()));
-                            added = true;
-                        }
-                        jobs.addJob(server.getName(), job);
+                    if (!job.getTags().contains(tag)) {
+                        toAdd = false;
                         break;
                     }
+                }
+
+                if(toAdd) {
+                    if (!added) {
+                        jobs.addServer(new JenkinsServer(server.getName(), server.getBaseUrl(), server.getAuth()));
+                        added = true;
+                    }
+                    jobs.addJob(server.getName(), job);
                 }
             }
         }
