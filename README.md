@@ -1,5 +1,36 @@
-Jenkins Orchestration
-=====================
+# jenkins_orchestration
 
-The goal of this repo is to run builds and get stats for Jenkins jobs.
-It will store specific jobs in a json config and you can run commands on them.
+FIXME: description
+
+## Installation
+
+Download from http://example.com/FIXME.
+
+## Usage
+
+FIXME: explanation
+
+    $ java -jar jenkins_orchestration-0.1.0-standalone.jar [args]
+
+## Options
+
+FIXME: listing of options this app accepts.
+
+## Examples
+
+...
+
+### Bugs
+
+...
+
+### Any Other Sections
+### That You Think
+### Might be Useful
+
+## License
+
+Copyright © 2019 FIXME
+
+Distributed under the Eclipse Public License either version 1.0 or (at
+your option) any later version.
