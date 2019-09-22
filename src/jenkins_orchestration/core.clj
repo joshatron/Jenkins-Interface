@@ -28,7 +28,7 @@
    :tags ["linux" "ui"]}])
 
 (defn filter-tag [jobs tag]
-  (filter (fn [job] (some (fn [t] (= t tag)) (job :tags))) jobs))
+  (filter (fn [job] (some #(= tag %1) (:tags job))) jobs))
 
 (defn filter-tags [jobs tags]
-  (reduce (fn [j tag] (filter-tag j tag)) jobs tags))
+  (reduce filter-tag jobs tags))
