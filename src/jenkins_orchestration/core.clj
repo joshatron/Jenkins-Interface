@@ -1,4 +1,5 @@
 (ns jenkins-orchestration.core
+  (:require [clj-http.client :as client])
   (:gen-class))
 
 (defn -main
@@ -72,9 +73,9 @@
                           :value ""}]}])
 
 (def params [
-             {:name "env"
+             {:name  "env"
               :value "dev"}
-             {:name "submodule"
+             {:name  "submodule"
               :value "first"}])
 
 (defn filter-tag [jobs tag]
@@ -83,13 +84,18 @@
 (defn filter-tags [jobs tags]
   (reduce filter-tag jobs tags))
 
-(defn replace-parameters [jobs new-params]
-  (map (fn [job]
-         (reduce (fn [job new-param]
-                   (assoc job :parameters
-                              (map (fn [old-param]
-                                     (if (= (:name old-param)(:name new-param))
-                                       (assoc old-param :value (:value new-param))
-                                       old-param))
-                                   (:parameters job))))
-                 job new-params)) jobs))
+(defn replace-parameters [job new-params]
+  ;;apply for each replacing parameter
+  (reduce (fn [job new-param]
+            ;;override job parameters
+            (assoc job :parameters
+                       ;;replacing old values with new
+                       (map (fn [old-param]
+                              (if (= (:name old-param) (:name new-param))
+                                (assoc old-param :value (:value new-param))
+                                old-param))
+                            (:parameters job))))
+          job new-params))
+
+(defn get-job-info [job]
+  (client/get (:url job)))
