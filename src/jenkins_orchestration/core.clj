@@ -78,13 +78,20 @@
              {:name  "submodule"
               :value "first"}])
 
-(defn filter-tag [jobs tag]
+(defn filter-tag
+  "Filter out all the jobs that don't contain the specified tag"
+  [jobs tag]
   (filter (fn [job] (some #(= tag %1) (:tags job))) jobs))
 
-(defn filter-tags [jobs tags]
+(defn filter-tags
+  "Filter out all the jobs that don't contain all the specified tags"
+  [jobs tags]
   (reduce filter-tag jobs tags))
 
-(defn replace-parameters [job new-params]
+(defn inject-parameters
+  "Inject parameters into the job, overriding default values if they exist.
+  This will not add new parameters that aren't defined in the job"
+  [job new-params]
   ;;apply for each replacing parameter
   (reduce (fn [job new-param]
             ;;override job parameters
@@ -97,5 +104,7 @@
                             (:parameters job))))
           job new-params))
 
-(defn get-job-info [job]
+(defn get-job-info
+  "Get info about the job from the server"
+  [job]
   (client/get (:url job)))
