@@ -1,5 +1,6 @@
 (ns jenkins-orchestration.core
   (:require [clj-http.client :as client])
+  (:require [cheshire.core :as json :refer :all])
   (:gen-class))
 
 (defn -main
@@ -10,7 +11,7 @@
 ;; Test structure
 (def jobs [
            {:title      "Calc Mac"
-            :url        "http://joshatron.io/jenkins/Calc_Mac"
+            :url        "http://localhost:8080/job/UI/job/Calc_Mac"
             :tags       ["mac" "calc"]
             :parameters [{
                           :name  "env"
@@ -21,7 +22,7 @@
                           :type  "string"
                           :value "all"}]}
            {:title      "Calc Win"
-            :url        "http://joshatron.io/jenkins/Calc_Win"
+            :url        "http://localhost:8080/job/UI/job/Calc_Win"
             :tags       ["win" "calc"]
             :parameters [{
                           :name  "env"
@@ -32,7 +33,7 @@
                           :type  "string"
                           :value "all"}]}
            {:title      "Calc Linux"
-            :url        "http://joshatron.io/jenkins/Calc_Linux"
+            :url        "http://localhost:8080/job/UI/job/Calc_Linux"
             :tags       ["linux" "calc"]
             :parameters [{
                           :name  "env"
@@ -43,7 +44,7 @@
                           :type  "string"
                           :value "all"}]}
            {:title      "UI Mac"
-            :url        "http://joshatron.io/jenkins/UI_Mac"
+            :url        "http://localhost:8080/job/UI/job/UI_Mac"
             :tags       ["mac" "ui"]
             :parameters [{
                           :name  "env"
@@ -54,14 +55,14 @@
                           :type  "string"
                           :value "all"}]}
            {:title      "UI Win"
-            :url        "http://joshatron.io/jenkins/UI_Win"
+            :url        "http://localhost:8080/job/UI/job/UI_Win"
             :tags       ["win" "ui"]
             :parameters [{
                           :name  "env"
                           :type  "string"
                           :value "e2e"}]}
            {:title      "UI Linux"
-            :url        "http://joshatron.io/jenkins/UI_Linux"
+            :url        "http://localhost:8080/job/UI/job/UI_Linux"
             :tags       ["linux" "ui"]
             :parameters [{
                           :name  "env"
@@ -107,4 +108,4 @@
 (defn get-job-info
   "Get info about the job from the server"
   [job]
-  (client/get (:url job)))
+  (json/parse-string (:body (client/get (str (:url job) "/api/json")  {:basic-auth ["joshatron" ""]}))))
