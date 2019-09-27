@@ -9,8 +9,16 @@
   (println "Hello, World!"))
 
 ;; Test structure
+
+(def servers [
+              {:name "main"
+               :url "http://localhost:8080"
+               :username "joshatron"
+               :token "116020aa468bc4510f74abf93399f19a8f"}])
+
 (def jobs [
            {:title      "Calc Mac"
+            :server "main"
             :url        "http://localhost:8080/job/UI/job/Calc_Mac"
             :tags       ["mac" "calc"]
             :parameters [{
@@ -22,6 +30,7 @@
                           :type  "string"
                           :value "all"}]}
            {:title      "Calc Win"
+            :server "main"
             :url        "http://localhost:8080/job/UI/job/Calc_Win"
             :tags       ["win" "calc"]
             :parameters [{
@@ -33,6 +42,7 @@
                           :type  "string"
                           :value "all"}]}
            {:title      "Calc Linux"
+            :server "main"
             :url        "http://localhost:8080/job/UI/job/Calc_Linux"
             :tags       ["linux" "calc"]
             :parameters [{
@@ -44,6 +54,7 @@
                           :type  "string"
                           :value "all"}]}
            {:title      "UI Mac"
+            :server "main"
             :url        "http://localhost:8080/job/UI/job/UI_Mac"
             :tags       ["mac" "ui"]
             :parameters [{
@@ -55,6 +66,7 @@
                           :type  "string"
                           :value "all"}]}
            {:title      "UI Win"
+            :server "main"
             :url        "http://localhost:8080/job/UI/job/UI_Win"
             :tags       ["win" "ui"]
             :parameters [{
@@ -62,6 +74,7 @@
                           :type  "string"
                           :value "e2e"}]}
            {:title      "UI Linux"
+            :server "main"
             :url        "http://localhost:8080/job/UI/job/UI_Linux"
             :tags       ["linux" "ui"]
             :parameters [{
@@ -105,7 +118,16 @@
                             (:parameters job))))
           job new-params))
 
+(defn get-server-for-job
+  "Get the corresponding server for a job"
+  [servers job]
+  (first (filter #(= (:server job) (:name %1)) servers)))
+
 (defn get-job-info
   "Get info about the job from the server"
-  [job]
-  (json/parse-string (:body (client/get (str (:url job) "/api/json")  {:basic-auth ["joshatron" ""]}))))
+  [servers job]
+  (let [server (get-server-for-job servers job)]
+    (json/parse-string
+      (:body (client/get
+               (str (:url job) "/api/json")
+               {:basic-auth [(:username server) (:token server)]})))))
