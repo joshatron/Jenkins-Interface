@@ -3,11 +3,20 @@
   (:require [cheshire.core :as json :refer :all]))
 
 
-(defn get-job-info
+(defn- get-job-info
   "Get info about the job from the server"
-  [server job]
+  [base-url username token]
   (json/parse-string
     (:body (client/get
-             (str (:url job) "/api/json")
-             {:basic-auth [(:username server) (:token server)]}))
+             (str base-url "/api/json")
+             {:basic-auth [username token]}))
     true))
+
+(defn- trigger-build
+  "Trigger a build on the server with parameters"
+  [base-url username token parameters]
+  (client/post (str base-url "/build")
+               {:basic-auth [username token]
+                :form-params {:json (json/generate-string {:parameter (map #({:name (:name %1)
+                                                                              :value (:value %1)})
+                                                                           parameters)})}}))
