@@ -1,4 +1,5 @@
-(ns jenkins-orchestration.filter)
+(ns jenkins-orchestration.filter
+  (:require [clojure.string :as str]))
 
 (defn filter-tag
   "Filter out all the jobs that don't contain the specified tag"
@@ -30,4 +31,9 @@
   "Get the corresponding server for a job"
   [servers job]
   (first (filter #(= (:server job) (:name %1)) servers)))
+
+(defn get-server-for-url
+  "Get the proper server from the url of a job"
+  [servers job-url]
+  (first (filter #(str/starts-with? job-url (:url %1)) servers)))
 
