@@ -1,5 +1,7 @@
 (ns jenkins-orchestration.core
-  (:require [cheshire.core :as json :refer :all])
+  (:require [cheshire.core :as json])
+  (:require [jenkins-orchestration.filter :as jfilter])
+  (:require [jenkins-orchestration.http :as jhttp])
   (:gen-class))
 
 (defn -main
