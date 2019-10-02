@@ -15,9 +15,9 @@
 (defn- get-parameters-from-body
   "Collect a list of parameters from the body of a job"
   [body]
-  (map #({:name (:name %1)
-          :value (:value (:defaultParameterValue %1))
-          :type (case (:type %1)
+  (map (fn [param] {:name (:name param)
+          :value (:value (:defaultParameterValue param))
+          :type (case (:type param)
                   "StringParameterDefinition" "string")})
        (:parameterDefinitions (first (:property body)))))
 
