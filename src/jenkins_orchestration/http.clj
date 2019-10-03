@@ -33,7 +33,7 @@
 (defn- get-children-for-url
   "Get the urls of all the child jobs in a job"
   [base-url username token]
-  (map #(:url %1)
+  (map :url
        (:jobs (json/parse-string
                 (:body (client/get
                          (str base-url "/api/json")
@@ -56,8 +56,18 @@
      :tags tags
      :parameters (get-parameters-from-body body)}))
 
+(def create-jobs-from-children
+  "Creates jobs from the children of a folder"
+  [base-url servers tags]
+  (map #(create-job %1 servers tags) (get-children base-url servers)))
+
 (defn trigger-build
   "Trigger a build on the specified job"
   [job servers new-params]
   (let [server (jfilter/get-server-for-job servers job)]
     (trigger-build-for-url (:url job) (:username server) (:token server) (:parameters (jfilter/inject-parameters job new-params)))))
+
+(defn trigger-builds
+  "Trigger a build on all of the specified jobs"
+  [jobs servers new-params]
+  (doseq [job jobs] (trigger-build job servers new-params)))

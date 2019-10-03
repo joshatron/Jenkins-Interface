@@ -36,4 +36,3 @@
   "Get the proper server from the url of a job"
   [servers job-url]
   (first (filter #(str/starts-with? job-url (:url %1)) servers)))
-
