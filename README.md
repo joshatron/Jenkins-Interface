@@ -1,36 +1,21 @@
-# jenkins_orchestration
+Jenkins Orchestration
+=====================
 
-FIXME: description
+The goal of this application is to create an environment to control a set of jenkins jobs.
 
 ## Installation
 
-Download from http://example.com/FIXME.
+Clone from https://github.com/joshatron/Jenkins-Orchestration.
 
 ## Usage
 
-FIXME: explanation
+Run the following command to start a REPL:
 
-    $ java -jar jenkins_orchestration-0.1.0-standalone.jar [args]
+    $ ./jenkins
+    
+Note: you will need leiningen installed.
 
 ## Options
 
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
-## License
-
-Copyright © 2019 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+This app contains no options.
+It will import jobs located in the config.json file.
