@@ -56,7 +56,7 @@
      :tags tags
      :parameters (get-parameters-from-body body)}))
 
-(def create-jobs-from-children
+(defn create-jobs-from-children
   "Creates jobs from the children of a folder"
   [base-url servers tags]
   (map #(create-job %1 servers tags) (get-children base-url servers)))
@@ -71,3 +71,9 @@
   "Trigger a build on all of the specified jobs"
   [jobs servers new-params]
   (doseq [job jobs] (trigger-build job servers new-params)))
+
+(defn get-last-finished-durations
+  "Get last duration of jobs specified"
+  [jobs servers]
+  (map #(:duration (let [server (jfilter/get-server-for-url servers (:url %1))]
+                     (get-job-body (str (:url %1) "/" (:number (:lastCompletedBuild (get-job-body (:url %1) (:username server) (:token server))))) (:username server) (:token server)))) jobs)) 

@@ -9,6 +9,16 @@
   [& args]
   (println "Hello, World!"))
 
+(defn save-config
+  "Save config back to file"
+  [config]
+  (json/generate-stream config (clojure.java.io/writer "./config.json") {:pretty true}))
+
+(defn add-jobs-to-config
+  "Add jobs to config"
+  [config jobs]
+  (assoc config :jobs
+                (concat (:jobs config) jobs)))
 ;; Test structure
 (def config (json/parse-stream (clojure.java.io/reader "./config.json") true))
 
@@ -17,3 +27,4 @@
               :value "dev"}
              {:name  "submodule"
               :value "first"}])
+

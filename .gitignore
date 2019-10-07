@@ -12,5 +12,6 @@ pom.xml.asc
 
 .idea/
 *.iml
+*.swp
 
 config.json
