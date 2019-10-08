@@ -3,13 +3,13 @@
 
 (defn filter-tag
   "Filter out all the jobs that don't contain the specified tag"
-  [jobs tag]
-  (filter (fn [job] (some #(= tag %1) (:tags job))) jobs))
+  [config tag]
+  (assoc config :jobs (filter (fn [job] (some #(= tag %1) (:tags job))) (:jobs config))))
 
 (defn filter-tags
   "Filter out all the jobs that don't contain all the specified tags"
-  [jobs tags]
-  (reduce filter-tag jobs tags))
+  [config tags]
+  (reduce filter-tag config tags))
 
 (defn inject-parameters
   "Inject parameters into the job, overriding default values if they exist.

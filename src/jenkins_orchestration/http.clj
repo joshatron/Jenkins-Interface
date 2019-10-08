@@ -69,11 +69,12 @@
 
 (defn trigger-builds
   "Trigger a build on all of the specified jobs"
-  [jobs servers new-params]
-  (doseq [job jobs] (trigger-build job servers new-params)))
+  [config new-params]
+  (doseq [job (:jobs config)] (trigger-build job (:servers config) new-params)))
 
 (defn get-last-finished-durations
   "Get last duration of jobs specified"
-  [jobs servers]
-  (map #(:duration (let [server (jfilter/get-server-for-url servers (:url %1))]
-                     (get-job-body (str (:url %1) "/" (:number (:lastCompletedBuild (get-job-body (:url %1) (:username server) (:token server))))) (:username server) (:token server)))) jobs)) 
+  [config]
+  (map #(:duration (let [server (jfilter/get-server-for-url (:servers config) (:url %1))]
+                     (get-job-body (str (:url %1) "/" (:number (:lastCompletedBuild (get-job-body (:url %1) (:username server) (:token server)))))
+                                   (:username server) (:token server)))) (:jobs config)))
