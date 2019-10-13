@@ -4,7 +4,7 @@
 (defn filter-tag
   "Filter out all the jobs that don't contain the specified tag"
   [config tag]
-  (assoc config :jobs (filter (fn [job] (some #(= tag %1) (:tags job))) (:jobs config))))
+  (assoc config :jobs (filter (fn [job] (some #(= tag %) (:tags job))) (:jobs config))))
 
 (defn filter-tags
   "Filter out all the jobs that don't contain all the specified tags"
@@ -30,9 +30,9 @@
 (defn get-server-for-job
   "Get the corresponding server for a job"
   [servers job]
-  (first (filter #(= (:server job) (:name %1)) servers)))
+  (first (filter #(= (:server job) (:name %)) servers)))
 
 (defn get-server-for-url
   "Get the proper server from the url of a job"
   [servers job-url]
-  (first (filter #(str/starts-with? job-url (:url %1)) servers)))
+  (first (filter #(str/starts-with? job-url (:url %)) servers)))

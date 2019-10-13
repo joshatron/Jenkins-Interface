@@ -35,8 +35,8 @@
   [base-url username token parameters]
   (client/post (str base-url "/build")
                {:basic-auth [username token]
-                :form-params {:json (json/generate-string {:parameter (map #({:name (:name %1)
-                                                                              :value (:value %1)})
+                :form-params {:json (json/generate-string {:parameter (map #({:name (:name %)
+                                                                              :value (:value %)})
                                                                            parameters)})}}))
 
 (defn- get-children-for-url
@@ -69,7 +69,7 @@
 (defn add-jobs-from-children
   "Creates jobs from the children of a folder"
   [base-url config tags]
-  (map #(add-job %1 (:servers config) tags) (get-children base-url (:servers config))))
+  (map #(add-job % (:servers config) tags) (get-children base-url (:servers config))))
 
 (defn trigger-build
   "Trigger a build on the specified job"
@@ -82,12 +82,9 @@
   [config new-params]
   (doseq [job (:jobs config)] (trigger-build job config new-params)))
 
-(defn get-last-finished-durations
-  "Get last duration of jobs specified"
-  [config]
-  (map #(:duration (let [server (jfilter/get-server-for-url (:servers config) (:url %1))]
-                     (get-job-build-body (:url %1)
-                                         (:number (:lastCompletedBuild (get-job-body (:url %1) (:username server) (:token server))))
-                                         (:username server)
-                                         (:token server))))
-       (:jobs config)))
+(defn get-last-build
+  "Get the last build number for a job. For build type, use from-
+  :lastBuild, :lastCompletedBuild, :lastFailedBuild, :lastStableBuild, :lastSuccessfulBuild, :lastUnstableBuild, or :lastUnsuccessfulBuild"
+  [job config build-type]
+  (let [server (jfilter/get-server-for-url (:servers config) (:url job))]
+    (:number (get (get-job-body (:url job) (:username server) (:token server)) build-type))))
