@@ -55,6 +55,32 @@
   (let [server (jfilter/get-server-for-url (:servers config) base-url)]
     (get-children-for-url base-url (:username server) (:token server))))
 
+(defn get-job-info
+  "Gets general info for a job"
+  [job config]
+  (let [server (jfilter/get-server-for-job (:servers config) job)
+        body (:url job) (:username server) (:token server)]
+    {:name (:name body)
+     :fullName (:fullName body)
+     :url (:url body)
+     :color (:color body)
+     :health (:score (first (:healthReport body)))
+     :in-queue (:inQueue body)
+     :oldest (:number (:firstBuild body))
+     :latest (:number (:lastBuild body))
+     :latest-completed (:number (:lastCompletedBuild body))
+     :latest-failed (:number (:lastFailedBuild body))
+     :latest-stable (:number (:lastStableBuild body))
+     :latest-successful (:number (:lastSuccessfulBuild body))
+     :latest-unstable (:number (:lastUnstableBuild body))
+     :latest-unsuccessful (:number (:lastUnsuccessfulBuild body))}
+     :next (:nextBuildNumber body)
+     :parameters (map (fn [param] {:name (:name param)
+                                   :value (:value (:defaultParameterValue param))
+                                   :type (case (:type param)
+                                           "StringParameterDefinition" "string")})
+                      (:parameterDefinitions (first (:property body))))}))
+
 (defn add-job
   "Create a job from the url, name, and tags"
   [base-url config tags]
@@ -82,7 +108,7 @@
   [config new-params]
   (doseq [job (:jobs config)] (trigger-build job config new-params)))
 
-(defn get-last-build
+(defn get-last-build-number
   "Get the last build number for a job. For build type, use from-
   :lastBuild, :lastCompletedBuild, :lastFailedBuild, :lastStableBuild, :lastSuccessfulBuild, :lastUnstableBuild, or :lastUnsuccessfulBuild"
   [job config build-type]
