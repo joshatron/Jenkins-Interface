@@ -59,7 +59,7 @@
   "Gets general info for a job"
   [job config]
   (let [server (jfilter/get-server-for-job (:servers config) job)
-        body (:url job) (:username server) (:token server)]
+        body (get-job-body (:url job) (:username server) (:token server))]
     {:name (:name body)
      :fullName (:fullName body)
      :url (:url body)
@@ -80,6 +80,20 @@
                                    :type (case (:type param)
                                            "StringParameterDefinition" "string")})
                       (:parameterDefinitions (first (:property body))))}))
+
+(defn get-job-build-info
+  "Gets information on a job build"
+  [job build config]
+  (let [server (jfilter/get-server-for-job (:servers config) job)
+        body (get-job-build-body (:url job) build (:username server) (:token server))]
+    {:parameters
+     :artifacts
+     :running
+     :duration
+     :estimated-duration
+     :build
+     :result
+     :timestamp}))
 
 (defn add-job
   "Create a job from the url, name, and tags"
