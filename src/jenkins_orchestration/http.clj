@@ -73,7 +73,7 @@
      :latest-stable (:number (:lastStableBuild body))
      :latest-successful (:number (:lastSuccessfulBuild body))
      :latest-unstable (:number (:lastUnstableBuild body))
-     :latest-unsuccessful (:number (:lastUnsuccessfulBuild body))}
+     :latest-unsuccessful (:number (:lastUnsuccessfulBuild body))
      :next (:nextBuildNumber body)
      :parameters (map (fn [param] {:name (:name param)
                                    :value (:value (:defaultParameterValue param))
@@ -81,19 +81,24 @@
                                            "StringParameterDefinition" "string")})
                       (:parameterDefinitions (first (:property body))))}))
 
+
 (defn get-job-build-info
   "Gets information on a job build"
   [job build config]
   (let [server (jfilter/get-server-for-job (:servers config) job)
         body (get-job-build-body (:url job) build (:username server) (:token server))]
-    {:parameters
-     :artifacts
-     :running
-     :duration
-     :estimated-duration
-     :build
-     :result
-     :timestamp}))
+    {:parameters (map (fn [param] {:name (:name param)
+                                   :value (:value (:defaultParameterValue param))
+                                   :type (case (:type param)
+                                           "StringParameterDefinition" "string")})
+                      (:parameters (first (:actions body))))
+     :artifacts (:artifacts body)
+     :running (:building body)
+     :duration (:duration body)
+     :estimated-duration (:estimatedDuration body)
+     :build (:number body)
+     :result (:result body)
+     :timestamp (:timestamp body)}))
 
 (defn add-job
   "Create a job from the url, name, and tags"
