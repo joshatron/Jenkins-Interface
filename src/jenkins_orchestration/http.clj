@@ -6,9 +6,7 @@
 (defn- get-job-info
   "Gets general info for a job"
   [base-url username token]
-  (let [body (json/parse-string (:body (client/get
-                                         (str base-url "/api/json")
-                                         {:basic-auth [username token]})))]
+  (let [body (json/parse-string (:body (client/get (str base-url "/api/json") {:basic-auth [username token]})) true)]
     {:name (:name body)
      :fullName (:fullName body)
      :url (:url body)
@@ -30,14 +28,22 @@
                                            "StringParameterDefinition" "string")})
                       (:parameterDefinitions (first (:property body))))}))
 
-(defn- get-job-build-body
-  "Get info about the job from the server"
-  [base-url build username token]
-  (json/parse-string
-    (:body (client/get
-             (str base-url "/" build "/api/json")
-             {:basic-auth [username token]}))
-    true))
+(defn- get-job-build-info
+  "Gets information on a job build"
+  [job-url build username token]
+  (let [body (json/parse-string (:body (client/get (str job-url "/" build "/api/json") {:basic-auth [username token]})) true)]
+    {:parameters (map (fn [param] {:name (:name param)
+                                   :value (:value (:defaultParameterValue param))
+                                   :type (case (:type param)
+                                           "StringParameterDefinition" "string")})
+                      (:parameters (first (:actions body))))
+     :artifacts (:artifacts body)
+     :running (:building body)
+     :duration (:duration body)
+     :estimated-duration (:estimatedDuration body)
+     :build (:number body)
+     :result (:result body)
+     :timestamp (:timestamp body)}))
 
 (defn- get-parameters-from-body
   "Collect a list of parameters from the body of a job"
@@ -72,26 +78,6 @@
   [base-url config]
   (let [server (jfilter/get-server-for-url (:servers config) base-url)]
     (get-children-for-url base-url (:username server) (:token server))))
-
-
-
-(defn get-job-build-info
-  "Gets information on a job build"
-  [job build config]
-  (let [server (jfilter/get-server-for-job (:servers config) job)
-        body (get-job-build-body (:url job) build (:username server) (:token server))]
-    {:parameters (map (fn [param] {:name (:name param)
-                                   :value (:value (:defaultParameterValue param))
-                                   :type (case (:type param)
-                                           "StringParameterDefinition" "string")})
-                      (:parameters (first (:actions body))))
-     :artifacts (:artifacts body)
-     :running (:building body)
-     :duration (:duration body)
-     :estimated-duration (:estimatedDuration body)
-     :build (:number body)
-     :result (:result body)
-     :timestamp (:timestamp body)}))
 
 (defn add-job
   "Create a job from the url, name, and tags"
