@@ -45,15 +45,6 @@
      :result (:result body)
      :timestamp (:timestamp body)}))
 
-(defn- get-parameters-from-body
-  "Collect a list of parameters from the body of a job"
-  [body]
-  (map (fn [param] {:name (:name param)
-          :value (:value (:defaultParameterValue param))
-          :type (case (:type param)
-                  "StringParameterDefinition" "string")})
-       (:parameterDefinitions (first (:property body)))))
-
 (defn- trigger-build-for-url
   "Trigger a build on the server with parameters"
   [base-url username token parameters]
@@ -73,12 +64,6 @@
                          {:basic-auth [username token]}))
                 true))))
 
-(defn- get-children
-  "Get the urls of all the children jobs in a job"
-  [base-url config]
-  (let [server (jfilter/get-server-for-url (:servers config) base-url)]
-    (get-children-for-url base-url (:username server) (:token server))))
-
 (defn add-job
   "Create a job from the url, name, and tags"
   [base-url config tags]
@@ -89,6 +74,12 @@
                                  :url base-url
                                  :tags tags
                                  :parameters (:parameters info)}))))
+
+(defn get-children
+  "Get the urls of all the children jobs in a job"
+  [base-url config]
+  (let [server (jfilter/get-server-for-url (:servers config) base-url)]
+    (get-children-for-url base-url (:username server) (:token server))))
 
 (defn add-jobs-from-children
   "Creates jobs from the children of a folder"
@@ -105,3 +96,10 @@
   "Trigger a build on all of the specified jobs"
   [config new-params]
   (doseq [job (:jobs config)] (trigger-build job config new-params)))
+
+(defn get-job-infos
+  "Grabs the info for the specified jobs"
+  [config]
+  (map #((let [server (jfilter/get-server-for-job (:servers config) %)]
+           (get-job-info (:url %) (:username server) (:token server))))
+       (:jobs config)))
