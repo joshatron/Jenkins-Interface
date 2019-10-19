@@ -72,7 +72,9 @@
                                     info (get-job-info base-url (:username server) (:token server))]
                                 {:title (:name info)
                                  :url base-url
-                                 :tags tags
+                                 :tags (cond
+                                         (fn? tags) (tags info)
+                                         :else tags)
                                  :parameters (:parameters info)}))))
 
 (defn get-children
