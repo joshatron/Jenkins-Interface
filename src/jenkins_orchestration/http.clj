@@ -3,7 +3,7 @@
   (:require [cheshire.core :as json])
   (:require [jenkins-orchestration.filter :as jfilter]))
 
-(defn- get-job-info
+(defn get-job-info-for-url
   "Gets general info for a job"
   [base-url username token]
   (let [body (json/parse-string (:body (client/get (str base-url "/api/json") {:basic-auth [username token]})) true)]
@@ -28,7 +28,7 @@
                                            "StringParameterDefinition" "string")})
                       (:parameterDefinitions (first (:property body))))}))
 
-(defn- get-job-build-info
+(defn get-job-build-info-for-url
   "Gets information on a job build"
   [job-url build username token]
   (let [body (json/parse-string (:body (client/get (str job-url "/" build "/api/json") {:basic-auth [username token]})) true)]
@@ -45,7 +45,7 @@
      :result (:result body)
      :timestamp (:timestamp body)}))
 
-(defn- trigger-build-for-url
+(defn trigger-build-for-url-and-parameters
   "Trigger a build on the server with parameters"
   [base-url username token parameters]
   (client/post (str base-url "/build")
@@ -54,7 +54,7 @@
                                                                               :value (:value %)})
                                                                            parameters)})}}))
 
-(defn- get-children-for-url
+(defn get-children-for-url
   "Get the urls of all the child jobs in a job"
   [base-url username token]
   (map :url
@@ -65,11 +65,11 @@
                 true))))
 
 (defn add-job
-  "Create a job from the url, name, and tags"
+  "Create a job from the url, name, and tags (tag can be vector or function which is given the job body)"
   [base-url config tags]
   (assoc config :jobs (concat (:jobs config)
                               (let [server (jfilter/get-server-for-url (:servers config) base-url)
-                                    info (get-job-info base-url (:username server) (:token server))]
+                                    info (get-job-info-for-url base-url (:username server) (:token server))]
                                 {:title (:name info)
                                  :url base-url
                                  :tags (cond
@@ -92,7 +92,7 @@
   "Trigger a build on the specified job"
   [job config new-params]
   (let [server (jfilter/get-server-for-job (:servers config) job)]
-    (trigger-build-for-url (:url job) (:username server) (:token server) (:parameters (jfilter/inject-parameters job new-params)))))
+    (trigger-build-for-url-and-parameters (:url job) (:username server) (:token server) (:parameters (jfilter/inject-parameters job new-params)))))
 
 (defn trigger-builds
   "Trigger a build on all of the specified jobs"
@@ -103,5 +103,5 @@
   "Grabs the info for the specified jobs"
   [config]
   (map #((let [server (jfilter/get-server-for-job (:servers config) %)]
-           (get-job-info (:url %) (:username server) (:token server))))
+           (get-job-info-for-url (:url %) (:username server) (:token server))))
        (:jobs config)))
